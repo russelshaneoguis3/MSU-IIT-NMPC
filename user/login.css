@@ -1,0 +1,134 @@
+* {
+    font-family: 'Source Sans Pro', sans-serif;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: 'Source Sans Pro', sans-serif;
+}
+
+body {
+
+    display: flex;
+    justify-content: center;
+    background-color: #9C0D0F;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+}
+
+form {
+    max-width: 400px;
+    height: 65%;
+    padding: 30px;
+    border: 1px solid #ccc;
+    border-radius: 30px;
+    background-color: #ffffff;
+    margin-right: 0.5px; /* Added margin for spacing */
+}
+
+form input {
+    width: 80%;
+    padding: 10px;
+    margin-bottom: 10px;
+    font-size: 16px;
+}
+
+form button {
+    width: 100%;
+    padding: 10px;
+    background-color: #007BFF;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 18px; /* Adjust the font size as needed */
+    transition: background-color 0.3s; /* Add transition for smooth effect */
+}
+
+form button:hover {
+    background-color: #6C757D; /* Change color on hover */
+}
+
+form img {
+
+    margin-right: 65px; 
+}
+
+img {
+    max-height: 100vh; /* Adjust the max height as needed */
+    margin: auto;
+    display: block;
+    margin-right: 40px; /* Added margin-bottom to move the image closer to the form */
+}
+
+        /* Style for Font Awesome icons */
+.fa{
+    position: absolute;
+    margin: 15px;
+    font-size: 20px;
+    color: #ccc;
+}
+
+        /* Style for input fields */
+input[type="text"], input[type="password"] {
+padding-left: 40px; /* Add padding for the icons */
+}
+     
+.input-container {
+    position: flex;
+    margin-bottom: 20px;
+    border: 1px solid #ccc; /* Border for the container */
+    border-radius: 1px; /* Border radius for the container */
+    background-color: #f0f0f0; /* Background color for the container */
+    padding: 2px; /* Add some padding for space */
+    display: flex; /* Use flexbox to arrange icon and input */
+    align-items: center; /* Center items vertically */
+}
+
+.input-container i {
+    font-size: 20px;
+    color: #2e2e2e;
+    margin-right: 10px; /* Add some space between icon and input */
+}
+
+a {
+    text-decoration: none;
+    color:#007BFF;
+    }
+
+a:hover {
+    text-decoration: underline;
+    color: #9C0D0F;
+}
+.input-container input {
+
+    border: none;
+    outline: none;
+    background-color: transparent; 
+    font-size: 15px;
+    margin-top: 6px;
+
+}
+
+
+@media screen and (max-width: 600px) {
+    form {
+        padding: 20px;
+    }
+
+    form input, form button {
+        font-size: 14px;
+    }
+
+}
+
+@media screen and (max-width: 800px) {
+    form {
+        padding: 20px;
+    }
+
+    form input, form button {
+        font-size: 14px;
+    }
+
+}

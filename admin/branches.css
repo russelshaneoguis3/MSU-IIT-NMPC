@@ -1,0 +1,313 @@
+* {
+    font-family: 'Source Sans Pro', sans-serif;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: 'Source Sans Pro', sans-serif;
+}
+
+/*--------------------------------------------------------------
+# Navbar Bar
+--------------------------------------------------------------*/
+
+.navbar{
+    background-color: #9C0D0F;  
+}
+.navbar-light .navbar-nav .nav-link {
+    color: #FFFFFF;
+    border-right: 0px;
+    
+  }
+
+.navbar .navbar-brand img {
+    padding: 0;
+    margin-left: 90px;
+    max-height: 50px;
+}
+
+.navbar-nav .nav-link {
+
+    transition: border-color 0.3s, color 0.3s; /* Add transition for smooth effect */
+}
+
+.navbar-nav .nav-link:hover {
+    text-decoration: underline;/* Change border color on hover */
+    color: #212529; /* Change text color on hover */
+}
+
+  
+/*--------------------------------------------------------------
+# SideBar
+--------------------------------------------------------------*/
+
+
+.main {
+    margin: 0 auto;
+    display: block;
+    height: 100%;
+    margin-top: 0px;
+}
+.mainInner{
+    display: table;
+    height: 100%;
+    width: 100%;
+    text-align: center;
+}
+.mainInner div{
+    display:table-cell;
+    vertical-align: middle;
+    font-size: 3em;
+    font-weight: bold;
+    letter-spacing: 1.25px;
+}
+#sidebarMenu {
+    height: 100%;
+    position: fixed;
+    left: 0;
+    width: 250px;
+    margin-top: 0px;
+    transform: translateX(-250px);
+    transition: transform 250ms ease-in-out;
+    background: linear-gradient(180deg, #212529 0%, #6C757D 100%);
+    z-index: 1;
+}
+.sidebarMenuInner{
+    margin:0;
+    padding:0;
+    border-top: 1px solid rgba(255, 255, 255, 0.10);
+    z-index: 1;
+}
+.sidebarMenuInner li{
+    list-style: none;
+    color: #fff;
+    padding: 16px;
+    cursor: pointer;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.10);
+}
+
+.sidebarMenuInner li span{
+    display: block;
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.50);
+}
+.sidebarMenuInner li a{
+    color: #fff;
+    text-decoration: none;
+    transition: border-color 0.3s, color 0.3s; /* Add transition for smooth effect */
+}
+
+.sidebarMenuInner li a:hover{
+    
+    text-decoration: underline;
+    color:#007BFF;
+}
+
+input[type="checkbox"]:checked ~ #sidebarMenu {
+    transform: translateX(0);
+}
+
+input[type=checkbox] {
+    transition: all 0.3s;
+    box-sizing: border-box;
+    display: none;
+}
+.sidebarIconToggle {
+    transition: all 0.3s;
+    box-sizing: border-box;
+    cursor: pointer;
+    position: absolute;
+    z-index: 99;
+    height: 100%;
+    width: 100%;
+    top: 22px;
+    left: 15px;
+    height: 22px;
+    width: 22px;
+}
+.spinner {
+    transition: all 0.3s;
+    box-sizing: border-box;
+    position: absolute;
+    height: 3px;
+    width: 100%;
+    background-color: #fff;
+}
+.horizontal {
+    transition: all 0.3s;
+    box-sizing: border-box;
+    position: relative;
+    float: left;
+    margin-top: 3px;
+}
+.diagonal.part-1 {
+    position: relative;
+    transition: all 0.3s;
+    box-sizing: border-box;
+    float: left;
+}
+.diagonal.part-2 {
+    transition: all 0.3s;
+    box-sizing: border-box;
+    position: relative;
+    float: left;
+    margin-top: 3px;
+}
+input[type=checkbox]:checked ~ .sidebarIconToggle > .horizontal {
+    transition: all 0.3s;
+    box-sizing: border-box;
+    opacity: 0;
+}
+input[type=checkbox]:checked ~ .sidebarIconToggle > .diagonal.part-1 {
+    transition: all 0.3s;
+    box-sizing: border-box;
+    transform: rotate(135deg);
+    margin-top: 8px;
+}
+input[type=checkbox]:checked ~ .sidebarIconToggle > .diagonal.part-2 {
+    transition: all 0.3s;
+    box-sizing: border-box;
+    transform: rotate(-135deg);
+    margin-top: -9px;
+}
+
+.card {
+    transition: transform 0.3s;
+    margin-left: 30px;
+    margin-bottom: 30px;
+  }
+
+  .card:hover {
+    transform: scale(1.01);
+    box-shadow: 2px 2px 2px #212529;
+  }
+
+  .card-body table {
+    font-size: 14px; /* Adjust the font size as needed */
+}
+
+  .card-body th {
+    padding: 10px;
+  }
+
+  .card-body td {
+    padding: 8px; /* Adjust the padding as needed */
+  }
+/*--------------------------------------------------------------
+# Breadcrumbs
+--------------------------------------------------------------*/
+.breadcrumbs {
+    padding: 20px 0 10px 0;
+    background: #6C757D;
+    border-bottom: 1px solid #ededed;
+    margin-bottom: 40px;
+    display: flex;
+    justify-content: space-between; /* Add space-between property */
+    color: #ffffff;
+    z-index: 0;
+  }
+  
+  .breadcrumbs h2 {
+    font-size: 28px;
+    font-weight: 700;
+    color: #ffffff;
+    
+  }
+  
+  .breadcrumbs ol {
+    list-style: none;
+    padding: 0;
+  
+    font-size: 14px;
+    display: flex;
+    align-items: center; /* Vertically align the items */
+  }
+  
+  .breadcrumbs ol li+li {
+    padding-left: 10px;
+  }
+  
+  .breadcrumbs ol li+li::before {
+    display: inline-block;
+    padding-right: 10px;
+    color: #ffffff;
+    content: "/";
+  }
+  
+  /* Adjust the style for the links */
+  .breadcrumbs ol li a {
+    color: #9C0D0F;
+    text-decoration: none;
+  }
+  
+  .breadcrumbs ol li a:hover {
+    text-decoration: underline;
+    color: #007bFF;
+  }
+  
+
+/*--------------------------------------------------------------
+# Footer
+--------------------------------------------------------------*/
+#footer {
+    background: #6C757D;
+    padding: 0 0 20px 0;
+    color: #fff;
+    font-size: 12px;
+  }
+  
+  
+  #footer .footer-top {
+    background: #212529;
+    border-top: 1px solid #6C757D;
+    border-bottom: 1px solid #6C757D;
+    padding: 30px 0 30px 0;
+  }
+  
+  #footer .footer-top h4 {
+    font-size: 18px;
+    font-weight: bold;
+    color: #fff;
+    text-transform: uppercase;
+    padding-bottom: 12px;
+  }
+  
+  #footer .footer-top .footer-links {
+    margin-bottom: 10px;
+    margin-left: 20px;
+
+  }
+  
+  #footer .footer-top .footer-links ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  #footer .footer-top .footer-links ul a {
+    color: #fff;
+    transition: 0.3s;
+    display: inline-block;
+    line-height: 1;
+  }
+  
+  #footer .footer-top .footer-links ul a:hover {
+    color: #9C0D0F;
+  }
+  
+  
+  #footer .credits {
+
+    background: #6C757D;
+    padding-top: 10px;
+    text-align: center;
+    font-size: 13px;
+    color: #fff;
+  }
+
+  #footer .credits a {
+    color: #9C0D0F;
+  }
+
+  #footer .credits a:hover {
+    color: #007BFF;
+  }
