@@ -5,72 +5,6 @@ include("../connection.php");
 
 if (isset($_SESSION['id']) && isset($_SESSION['username']) && $_SESSION['role'] === 'administrator') {
 
-    if (isset($_GET['deleteBranch'])) {
-        $deleteB = $_GET['deleteBranch'];
-    
-// Check if $deleteB is a valid integer (Delete Branch)
-        if (filter_var($deleteB, FILTER_VALIDATE_INT)) {
-            $deleteB_que = "DELETE FROM branch WHERE branch_id = $deleteB";
-            $deleteB_que_result = mysqli_query($conn, $deleteB_que);
-    
-            if ($deleteB_que_result) {
-                // Redirect to career-branch.php after deletion
-                header("Location: branches.php");
-                exit;
-            } else {
-                // Handle query execution error
-                echo "Error: " . mysqli_error($conn);
-            }
-        } else {
-            // Handle invalid branch_id (not an integer)
-            echo "Invalid branch ID";
-        }
-    }
-
-    if ($_SERVER["REQUEST_METHOD"] == "POST") {
-        // Retrieve data from the form
-        $branchId = $_POST['branch_id'];
-        $branchName = $_POST['branch_name'];
-        $location = $_POST['location'];
-        $mobileNo = $_POST['mobile_no'];
-        $telNo = $_POST['tel_no'];
-        $hrAssigned = $_POST['hr_assigned'];
-    
-        // Perform the update in the database branch table with prepared statement
-        $updateQuery = "UPDATE branch SET
-        branch_name = ?,
-        location = ?,
-        mobile_no = ?,
-        tel_no = ?,
-        hr_assigned = ?
-        WHERE branch_id = ?";
-
-        // Prepare the statement
-        $stmt = mysqli_prepare($conn, $updateQuery);
-
-        // Bind parameters
-        mysqli_stmt_bind_param($stmt, "sssssi", $branchName, $location, $mobileNo, $telNo, $hrAssigned, $branchId);
-
-        // Execute the statement
-        if (mysqli_stmt_execute($stmt)) {
-        // Script to show Bootstrap modal after successful update
-        // Redirect to the same page after setting the session variable
-        header("Location: branches.php?editSuccess=true");
-        exit();
-        } else {
-        // Handle query execution error
-        echo "Error updating branch: " . mysqli_error($conn);
-        }
-
-        // Close the statement
-        mysqli_stmt_close($stmt);
-
-    }
-// Function to escape single quotes
-function escapeSingleQuotes($string) {
-    return str_replace("'", "\\'", $string);
-}
-
 ?>
 
 <!DOCTYPE html>
@@ -377,11 +311,11 @@ function escapeSingleQuotes($string) {
   <main id="main" class="main">
 
     <div class="pagetitle">
-      <h1>Branch List</h1>
+      <h1>Branch Careers</h1>
       <nav>
         <ol class="breadcrumb">
           <li class="breadcrumb-item"><a href="admin-dashboard.php">Home</a></li>
-          <li class="breadcrumb-item active">Branches</li>
+          <li class="breadcrumb-item active">Careers</li>
         </ol>
       </nav>
     </div><!-- End Page Title -->
@@ -390,32 +324,20 @@ function escapeSingleQuotes($string) {
     <?php
 
         // Fetch data from the 'branch' area 1
-            $query1 = "SELECT branch_id, CONCAT('<b>',branch_name,'</b>', '<br>', location) as branch, 
-
-            branch_name, location, mobile_no, tel_no, hr_assigned,
-
-            CONCAT('<b>','Tel no:  ','</b>', tel_no,'<br>','<b>','Mobile no:  ' , '</b>', mobile_no) as contact, name, 
+            $query1 = "SELECT branch_id, CONCAT('<b>',branch_name,'</b>', '<br>', location) as branch, name, 
             COUNT(job_id) AS job_count FROM user, branch LEFT JOIN job ON branch_loc = branch_id WHERE area = 1 AND id = hr_assigned GROUP BY branch_id";
 
             $result1 = mysqli_query($conn, $query1);
 
         // Fetch data from the 'branch' area 2 
-            $query2 = "SELECT branch_id, CONCAT('<b>',branch_name,'</b>', '<br>', location) as branch, 
-
-            branch_name, location, mobile_no, tel_no, hr_assigned,
-
-            CONCAT('<b>','Tel no:  ','</b>', tel_no,'<br>','<b>','Mobile no:  ' , '</b>', mobile_no) as contact, name, 
+            $query2 = "SELECT branch_id, CONCAT('<b>',branch_name,'</b>', '<br>', location) as branch, name, 
             COUNT(job_id) AS job_count FROM user, branch LEFT JOIN job ON branch_loc = branch_id WHERE area = 2 AND id = hr_assigned GROUP BY branch_id";
     
             $result2 = mysqli_query($conn, $query2);
 
 
             // Fetch data from the 'branch' area 3
-            $query3 = "SELECT branch_id, CONCAT('<b>',branch_name,'</b>', '<br>', location) as branch, 
-    
-            branch_name, location, mobile_no, tel_no, hr_assigned,
-        
-            CONCAT('<b>','Tel no:  ','</b>', tel_no,'<br>','<b>','Mobile no:  ' , '</b>', mobile_no) as contact, name, 
+            $query3 = "SELECT branch_id, CONCAT('<b>',branch_name,'</b>', '<br>', location) as branch, name, 
             COUNT(job_id) AS job_count FROM user, branch LEFT JOIN job ON branch_loc = branch_id WHERE area = 3 AND id = hr_assigned GROUP BY branch_id";
         
             $result3 = mysqli_query($conn, $query3);
@@ -425,7 +347,7 @@ function escapeSingleQuotes($string) {
   <!-- Table 1/ Area 1 -->
   <div class="card" style="max-width: 80rem;">
             <div class="card-header" style="background-color: #4775d1; color: #fff;">
-            <h4> Area 1  <a href="add-branch.php" class="btn btn-success" style="float: right"> <i class="fa-solid fa-location-dot"></i> Add Branch</a></h4> 
+            <h4>Area 1 <a href="add-career.php" class="btn btn-success" style="float: right"><i class="fa-solid fa-plus"></i> Add Career</a></h4> 
             </div>
             <div class="card-body" style="background-color: #CFE2FF">
                 <blockquote class="blockquote mb-4">
@@ -433,7 +355,6 @@ function escapeSingleQuotes($string) {
                         <thead>
                             <tr>
                                 <th scope="col" class="col-md-4">Branches</th>
-                                <th scope="col" class="col-md-3">Contact No.</th>
                                 <th scope="col" class="col-md-2">HR Assigned</th>
                                 <th scope="col" class="col-md-2">Available Jobs</th>
                                 <th scope="col" class="col-md-1">Action</th>
@@ -445,16 +366,11 @@ function escapeSingleQuotes($string) {
                         while ($row = mysqli_fetch_assoc($result1)) {
                             echo '<tr>';
                             echo '<td>' . $row['branch'] . '</td>';
-                            echo '<td>' . $row['contact'] . '</td>';
                             echo '<td>' . $row['name'] . '</td>'; 
                             echo '<td>' .'<b>',$row['job_count'],'</b>', "  Available" . '</td>'; 
                             echo '<td>';
-                            // Add an Edit button with a Bootstrap class
-                            echo '<a href="#" class="btn btn-outline-warning" onclick="editBranch(' . $row['branch_id'] . ', \'' . escapeSingleQuotes($row['branch_name']) . '\', \'' . escapeSingleQuotes($row['location']) . '\', \'' . escapeSingleQuotes($row['mobile_no']) . '\', \'' . escapeSingleQuotes($row['tel_no']) . '\', \'' . escapeSingleQuotes($row['hr_assigned']) . '\')"><i class="fa-solid fa-pen-to-square"></i></a>';
-
-                            // Add a Delete button with a Bootstrap class
-                            echo ' <a href="#" class="btn btn-outline-danger" onclick="deleteBranch(' . $row['branch_id'] . ')"><i class="fa-solid fa-trash-can"></i></a>';
-
+                            echo '<a href="career-list.php?branch_id=' . $row['branch_id'] . '" class="btn btn-outline-primary"><i class="fa-solid fa-eye"></i></a>';
+                            echo '</td>';    
                             echo '</td>';    
                             echo '</tr>';
                         }
@@ -469,7 +385,7 @@ function escapeSingleQuotes($string) {
 
 <div class="card" style="max-width: 80rem;">
             <div class="card-header" style="background-color: #4775d1; color: #fff;">
-            <h4> Area 2 </h4> 
+            <h4> Area 2  </h4> 
             </div>
             <div class="card-body" style="background-color: #CFE2FF">
                 <blockquote class="blockquote mb-4">
@@ -477,7 +393,6 @@ function escapeSingleQuotes($string) {
                         <thead>
                             <tr>
                                 <th scope="col" class="col-md-4">Branches</th>
-                                <th scope="col" class="col-md-3">Contact No.</th>
                                 <th scope="col" class="col-md-2">HR Assigned</th>
                                 <th scope="col" class="col-md-2">Available Jobs</th>
                                 <th scope="col" class="col-md-1">Action</th>
@@ -489,16 +404,10 @@ function escapeSingleQuotes($string) {
                         while ($row = mysqli_fetch_assoc($result2)) {
                             echo '<tr>';
                             echo '<td>' . $row['branch'] . '</td>';
-                            echo '<td>' . $row['contact'] . '</td>';
                             echo '<td>' . $row['name'] . '</td>'; 
                             echo '<td>' .'<b>',$row['job_count'],'</b>', "  Available" . '</td>'; 
                             echo '<td>';
-                            // Add an Edit button with a Bootstrap class
-                            echo '<a href="#" class="btn btn-outline-warning" onclick="editBranch(' . $row['branch_id'] . ', \'' . $row['branch_name'] . '\', \'' . $row['location'] . '\', \'' . $row['mobile_no'] . '\', \'' . $row['tel_no'] . '\', \'' . $row['hr_assigned'] . '\')"><i class="fa-solid fa-pen-to-square"></i></a>';
-
-                            // Add a Delete button with a Bootstrap class
-                            echo ' <a href="#" class="btn btn-outline-danger" onclick="deleteBranch(' . $row['branch_id'] . ')"><i class="fa-solid fa-trash-can"></i></a>';
-
+                            echo '<a href="career-list.php?branch_id=' . $row['branch_id'] . '" class="btn btn-outline-primary"><i class="fa-solid fa-eye"></i></a>';
                             echo '</td>';    
                             echo '</tr>';
                         }
@@ -513,7 +422,7 @@ function escapeSingleQuotes($string) {
 
 <div class="card" style="max-width: 80rem;">
             <div class="card-header" style="background-color: #4775d1; color: #fff;">
-            <h4> Area 3  </h4> 
+            <h4> Area 3 </h4> 
             </div>
             <div class="card-body" style="background-color: #CFE2FF">
                 <blockquote class="blockquote mb-4">
@@ -521,7 +430,6 @@ function escapeSingleQuotes($string) {
                         <thead>
                             <tr>
                                 <th scope="col" class="col-md-4">Branches</th>
-                                <th scope="col" class="col-md-3">Contact No.</th>
                                 <th scope="col" class="col-md-2">HR Assigned</th>
                                 <th scope="col" class="col-md-2">Available Jobs</th>
                                 <th scope="col" class="col-md-1">Action</th>
@@ -533,16 +441,10 @@ function escapeSingleQuotes($string) {
                         while ($row = mysqli_fetch_assoc($result3)) {
                             echo '<tr>';
                             echo '<td>' . $row['branch'] . '</td>';
-                            echo '<td>' . $row['contact'] . '</td>';
                             echo '<td>' . $row['name'] . '</td>'; 
                             echo '<td>' .'<b>',$row['job_count'],'</b>', "  Available" . '</td>'; 
                             echo '<td>';
-                            // Add an Edit button with a Bootstrap class
-                            echo '<a href="#" class="btn btn-outline-warning" onclick="editBranch(' . $row['branch_id'] . ', \'' . $row['branch_name'] . '\', \'' . $row['location'] . '\', \'' . $row['mobile_no'] . '\', \'' . $row['tel_no'] . '\', \'' . $row['hr_assigned'] . '\')"><i class="fa-solid fa-pen-to-square"></i></a>';
-
-                            // Add a Delete button with a Bootstrap class
-                            echo ' <a href="#" class="btn btn-outline-danger" onclick="deleteBranch(' . $row['branch_id'] . ')"><i class="fa-solid fa-trash-can"></i></a>';
-
+                            echo '<a href="career-list.php?branch_id=' . $row['branch_id'] . '" class="btn btn-outline-primary"><i class="fa-solid fa-eye"></i></a>';
                             echo '</td>';    
                             echo '</tr>';
                         }
@@ -553,76 +455,7 @@ function escapeSingleQuotes($string) {
             </div>
         </div>
 
-  </main><!-- End #main -->
-
-<!-- Update/Edit Branch Modal -->
-<div id="editBranchModal" class="modal" tabindex="-1" role="dialog">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header" style="background-color: #9C0D0F; color: #fff;">
-                <h5 class="modal-title">Edit Branch</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
-                </button>
-            </div>
-            <div class="modal-body" style="background-color: #f5f5ef;">
-                <!-- Form for Editing Branch -->
-                <form action="" method="post">
-                    <input type="hidden" id="editBranchId" name="branch_id">
-                    <div class="form-group">
-                        <label for="editBranchName"><b>Branch Name</b></label>
-                        <input type="text" class="form-control" id="editBranchName" name="branch_name" required>
-                    </div><br>
-                    <div class="form-group">
-                        <label for="editLocation"><b>Location</b></label>
-                        <input type="text" class="form-control" id="editLocation" name="location" required>
-                    </div><br>
-                    <div class="form-group">
-                        <label for="editTelNo"><b>Telephone Number </b>(separate with ' ; ' if multiple)</label>
-                        <input type="text" class="form-control" id="editTelNo" name="tel_no" required>
-                    </div><br>
-                    <div class="form-group">
-                        <label for="editMobileNo"><b>Mobile Number</b> (separate with ' ; ' if multiple)</label>
-                        <input type="text" class="form-control" id="editMobileNo" name="mobile_no" required>
-                    </div><br>
-                    <div class="form-group">
-                        <label for="editHrAssigned"><b>HR Assigned</b></label>
-                        <select class="form-control" id="editHrAssigned" name="hr_assigned" required>
-                            <?php
-                            // Fetch HR data from the 'user' table
-                            $hrQuery = "SELECT id, name, role FROM user WHERE role = 'HR' ";
-                            $hrResult = mysqli_query($conn, $hrQuery);
-
-                            // Display each HR as an option in the dropdown
-                            while ($hrRow = mysqli_fetch_assoc($hrResult)) {
-                                echo '<option value="' . $hrRow['id'] . '">' . $hrRow['name'] . ' | ' . $hrRow['role'] . '</option>';
-                            }
-
-                            // Free the result set
-                            mysqli_free_result($hrResult);
-                            ?>
-                        </select>
-                    </div><br>
-                    <button type="submit" class="btn btn-success">Save Changes</button>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Edit Success Modal -->
-<div id="editBranchSuccessModal" class="modal" tabindex="-1" role="dialog">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header" style="background-color: #66ccff; color: #fff;">
-                <h5 class="modal-title">Update Successful</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body" style="background-color: #f5f5ef;">
-                <p>The branch information has been updated successfully.</p>
-            </div>
-        </div>
-    </div>
-</div>
+</main><!-- End #main -->
 
 
   <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
@@ -674,48 +507,7 @@ function escapeSingleQuotes($string) {
 
 <!-- End Footer -->
 
-
-<script>
-function deleteBranch(branchId) {
-        // Trigger SweetAlert confirmation
-        Swal.fire({
-            title: "Are you sure?",
-            text: "Once deleted, you will not be able to recover this branch!",
-            icon: "warning",
-            showCancelButton: true,
-            confirmButtonColor: "#d33",
-            cancelButtonColor: "#3085d6",
-            confirmButtonText: "Yes, delete it!",
-        }).then((result) => {
-            if (result.isConfirmed) {
-                // If confirmed, redirect to deleteBranch URL
-                window.location.href = "branches.php?deleteBranch=" + branchId;
-            }
-        });
-    }
-
-</script>
-
-<script>
-    function editBranch(branchId, branchName, location, mobileNo, telNo, hrAssigned) {
-        console.log(branchId, branchName, location, mobileNo, telNo, hrAssigned);
-
-        // Set values in the modal form
-        document.getElementById('editBranchId').value = branchId;
-        document.getElementById('editBranchName').value = branchName;
-        document.getElementById('editLocation').value = location;
-        document.getElementById('editMobileNo').value = mobileNo;
-        document.getElementById('editTelNo').value = telNo;
-        document.getElementById('editHrAssigned').value = hrAssigned;
-
-        // Show the modal
-        $('#editBranchModal').modal('show');
-    }
-    
-</script>
-
-     
-  </body>
+</body>
 
 
 <?php 
@@ -726,15 +518,3 @@ function deleteBranch(branchId) {
 ?>
 
 </html>
-
-<?php
-
-// Check if the editSuccess parameter is present in the URL
-if (isset($_GET['editSuccess']) && $_GET['editSuccess'] === 'true') {
-    echo '<script>
-        $(document).ready(function(){
-            $("#editBranchSuccessModal").modal("show");
-        });
-    </script>';
-}
-?>

@@ -5,6 +5,69 @@ include("../connection.php");
 
 if (isset($_SESSION['id']) && isset($_SESSION['username']) && $_SESSION['role'] === 'administrator') {
 
+
+        // Check if branch_loc is set in the URL
+        if (isset($_GET['branch_id'])) {
+            $branch_id = $_GET['branch_id'];
+    
+            // Fetch job information based on the selected branch
+            $query = "SELECT job_id, date_pos, branch_loc, position, CONCAT('<b>','• ','</b>', job_des1,'<br>','<b>','• ' , '</b>', job_des2, '<br>', '<b>', '• ', '</b>', job_des3) as job_des, job_img FROM job WHERE branch_loc = ?";
+            $stmt = $conn->prepare($query);
+            $stmt->bind_param("i", $branch_id);
+            $stmt->execute();
+            $result = $stmt->get_result();
+    
+            $stmt->close();
+        } else {
+            echo 'Branch ID not specified.';
+        }
+
+            // Fetch branch_name based on the selected branch_id
+            $branch_query = "SELECT branch_name FROM branch WHERE branch_id = ?";
+            $branch_stmt = $conn->prepare($branch_query);
+            $branch_stmt->bind_param("i", $branch_id);
+            $branch_stmt->execute();
+            $branch_result = $branch_stmt->get_result();
+            $branch_row = $branch_result->fetch_assoc();
+            $branch_name = $branch_row['branch_name'];
+
+        if (isset($_GET['deleteJob'])) {
+                $deleteB1 = $_GET['deleteJob'];
+            
+                if (filter_var($deleteB1, FILTER_VALIDATE_INT)) {
+                  // Fetch the file path before deleting the job
+                  $filePathQuery = "SELECT job_img FROM job WHERE job_id = ?";
+                  $filePathStmt = $conn->prepare($filePathQuery);
+                  $filePathStmt->bind_param("i", $deleteB1);
+                  $filePathStmt->execute();
+                  $filePathResult = $filePathStmt->get_result();
+                  $filePathRow = $filePathResult->fetch_assoc();
+                  $filePath = "../uploads/" . $filePathRow['job_img'];
+      
+                  // Delete the job from the database
+                  $deleteB_que1 = "DELETE FROM job WHERE job_id = ?";
+                  $stmt = $conn->prepare($deleteB_que1);
+                  $stmt->bind_param("i", $deleteB1);
+                  $stmt->execute();
+
+                  if ($stmt->affected_rows > 0) {
+                  if (file_exists($filePath)) {
+                    unlink($filePath);
+                }
+                        header("Location: career.php");
+                        exit;
+                    } else {
+                        // Handle query execution error
+                        echo "Error: " . $stmt->error;
+                    }
+                
+                    $stmt->close();
+                } else {
+                    // Handle invalid job_id (not an integer)
+                    echo "Invalid job ID";
+                }                
+        
+            }
 ?>
 
 <!DOCTYPE html>
@@ -60,20 +123,6 @@ if (isset($_SESSION['id']) && isset($_SESSION['username']) && $_SESSION['role'] 
     <img src="../img/transition.jpg" alt="Loading Image">
 </div>
 
-
-<?php 
-
-        // Fetch data from the job count
-        $query1 = "SELECT COUNT(job_id) AS job_count from job";
-        $result1 = mysqli_query($conn, $query1);
-        $row1 = mysqli_fetch_assoc($result1);
-
-        // Fetch data from the job count
-        $query2 = "SELECT COUNT(applicant_id) AS applicant from job_applicants";
-        $result2 = mysqli_query($conn, $query2);
-        $row2 = mysqli_fetch_assoc($result2);
-
-?>
 
 <!-- ======= Header ======= -->
   <header id="header" class="header fixed-top d-flex align-items-center">
@@ -315,114 +364,72 @@ if (isset($_SESSION['id']) && isset($_SESSION['username']) && $_SESSION['role'] 
           <span>FAQs</span>
         </a>
       </li>
+    
+
+    
     </ul>
 
   </aside><!-- End Sidebar-->
 
-  <!-- Main BOdy -->
   <main id="main" class="main">
 
-<div class="pagetitle">
-  <h1>Dashboard</h1>
-  <nav>
-    <ol class="breadcrumb">
-      <li class="breadcrumb-item"><a href="admin-dashboard.php">Home</a></li>
-      <li class="breadcrumb-item active">Dashboard</li>
-    </ol>
-  </nav>
-</div><!-- End Page Title -->
-
-    <section class="section dashboard">
-      <div class="row">
-
-        <!-- Left side columns -->
-        <div class="col-lg-8">
-          <div class="row">
-
-            <!-- Sales Card -->
-            <div class="col-xxl-4 col-md-6">
-              <div class="card info-card sales-card">
-
-
-                <div class="card-body">
-                  <h5 class="card-title">Total Count <span>| Online Applicants</span></h5>
-
-                  <div class="d-flex align-items-center">
-                    <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
-                      <i class="bx bx-paper-plane"></i>
-                    </div>
-                    <div class="ps-3">
-                      <h6><?php echo $row2['applicant']; ?></h6>
-                      <span class="text-success small pt-1 fw-bold">job applicants </span>in all branches<span class="text-muted small pt-2 ps-1"></span>
-
-                    </div>
-                  </div>
-                </div>
-
-              </div>
-            </div><!-- End Sales Card -->
-
-            <!-- Revenue Card -->
-            <div class="col-xxl-4 col-md-6">
-              <div class="card info-card revenue-card">
-
-                <div class="card-body">
-                  <h5 class="card-title">Total Jobs <span>| Available</span></h5>
-
-                  <div class="d-flex align-items-center">
-                    <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
-                      <i class="bx bxs-briefcase-alt-2"></i>
-                    </div>
-                    <div class="ps-3">
-                      <h6><?php echo $row1['job_count']; ?></h6>
-                      <span class="text-success small pt-1 fw-bold">jobs available</span> in all branches<span class="text-muted small pt-2 ps-1"></span>
-
-                    </div>
-                  </div>
-                </div>
-
-              </div>
-            </div><!-- End Revenue Card -->
-
-            <!-- Customers Card -->
-            <div class="col-xxl-4 col-xl-12">
-
-              <div class="card info-card customers-card">
-
-                <div class="filter">
-                  <a class="icon" href="#" data-bs-toggle="dropdown"><i class="bi bi-three-dots"></i></a>
-                  <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
-                    <li class="dropdown-header text-start">
-                      <h6>Filter</h6>
-                    </li>
-
-                    <li><a class="dropdown-item" href="#">Today</a></li>
-                    <li><a class="dropdown-item" href="#">This Month</a></li>
-                    <li><a class="dropdown-item" href="#">This Year</a></li>
-                  </ul>
-                </div>
-
-                <div class="card-body">
-                  <h5 class="card-title">Customers <span>| This Year</span></h5>
-
-                  <div class="d-flex align-items-center">
-                    <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
-                      <i class="bi bi-people"></i>
-                    </div>
-                    <div class="ps-3">
-                      <h6>1244</h6>
-                      <span class="text-danger small pt-1 fw-bold">12%</span> <span class="text-muted small pt-2 ps-1">decrease</span>
-
-                    </div>
-                  </div>
-
-                </div>
-              </div>
-
-            </div><!-- End Customers Card -->
+    <div class="pagetitle">
+      <h1>Careers List</h1>
+      <nav>
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="career.php">Back</a></li>
+          <li class="breadcrumb-item active">Careers List</li>
+        </ol>
+      </nav>
+    </div><!-- End Page Title -->
   
-  
-  </main><!-- End #main -->
+
+  <!-- Table Area -->
+
+  <div class="card" style="max-width: 80rem;">
+            <div class="card-header" style="background-color: #4775d1; color: #fff;">
+            <h5>Jobs Available at <b> <?php echo $branch_name; ?></b></h5> 
+            </div>
+            <div class="card-body" style="background-color: #CFE2FF">
+                <blockquote class="blockquote mb-4">
+                    <table class="table table table-primary">
+                        <thead>
+                            <tr>
+                                <th scope="col" class="col-md-1">Date Posted</th>
+                                <th scope="col" class="col-md-2">Position</th>
+                                <th scope="col" class="col-md-3">Job Description</th>
+                                <th scope="col" class="col-md-1">Image</th>
+                                <th scope="col" class="col-md-1">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        <?php
+
+                        // Loop through the data and display each row in the table
+                        while ($row = $result->fetch_assoc()) {
+                            echo '<tr>';
+                            echo '<td>' . $row['date_pos'] . '</td>';
+                            echo '<td>' . $row['position'] . '</td>'; 
+                            echo '<td>' . $row['job_des'] . '</td>'; 
+                            $imagePath = "../uploads/{$row['job_img']}";
+                             // Print the image with the file path
+                            echo "<td><img src='$imagePath' alt='Image' style='max-width: 100px;'>";
+                            echo '<td>';
+                            echo ' <a href="#" class="btn btn-outline-danger" onclick="deleteJob(' . $row['job_id'] . ')"><i class="fa-solid fa-trash-can"></i></a>';
+                            echo '</td>';    
+                            echo '</tr>';
+                        }
+                        ?>
+                        </tbody>
+                    </table>
+                </blockquote>
+            </div>
+
+<br>
+ 
+
+</main><!-- End #main -->
+
 
   <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
 
@@ -444,8 +451,6 @@ if (isset($_SESSION['id']) && isset($_SESSION['username']) && $_SESSION['role'] 
 </html>
 
 <!--Container Main end-->
-
-
 
 <!-- ======= Footer ======= -->
 <footer id="footer">
@@ -475,9 +480,29 @@ if (isset($_SESSION['id']) && isset($_SESSION['username']) && $_SESSION['role'] 
   </div>
 </div>
 </footer>
-
-
 <!-- End Footer -->
+
+<script>
+function deleteJob(jobId) {
+        // Trigger SweetAlert confirmation
+        Swal.fire({
+            title: "Are you sure?",
+            text: "Once deleted, you will not be able to recover this JOB!",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#d33",
+            cancelButtonColor: "#3085d6",
+            confirmButtonText: "Yes, delete it!",
+        }).then((result) => {
+            if (result.isConfirmed) {
+            // If confirmed, redirect to deleteJob URL
+            window.location.href = "career-list.php?deleteJob=" + jobId;
+
+            }
+        });
+    }
+
+</script>
 
 </body>
 

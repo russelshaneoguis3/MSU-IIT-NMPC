@@ -5,6 +5,37 @@ include("../connection.php");
 
 if (isset($_SESSION['id']) && isset($_SESSION['username']) && $_SESSION['role'] === 'administrator') {
 
+
+        // Add Branches
+        if ($_SERVER["REQUEST_METHOD"] == "POST") {
+            // Prepare and bind the SQL statement with placeholders
+            $insertQuery = "INSERT INTO branch (area, branch_name, location, mobile_no, tel_no, hr_assigned)
+                            VALUES (?, ?, ?, ?, ?, ?)";
+    
+            $stmt = $conn->prepare($insertQuery);
+            $stmt->bind_param("isssss", $area, $branchName, $location, $mobileNo, $telNo, $hrAssigned);
+    
+            // Set the parameter values
+            $area = $_POST['area'];
+            $branchName = $_POST['branch_name'];
+            $location = $_POST['location'];
+            $mobileNo = $_POST['mobile_no'];
+            $telNo = $_POST['tel_no'];
+            $hrAssigned = $_POST['hr_assigned'];
+    
+            // Execute the statement
+            if ($stmt->execute()) {
+                $_SESSION['addBranchSuccess'] = true;
+            } else {
+                // Handle query execution error
+                echo "Error adding branch: " . $stmt->error;
+            }
+    
+            // Close the statement
+            $stmt->close();
+        }
+        
+
 ?>
 
 <!DOCTYPE html>
@@ -59,21 +90,6 @@ if (isset($_SESSION['id']) && isset($_SESSION['username']) && $_SESSION['role'] 
 <div id="transition-overlay">
     <img src="../img/transition.jpg" alt="Loading Image">
 </div>
-
-
-<?php 
-
-        // Fetch data from the job count
-        $query1 = "SELECT COUNT(job_id) AS job_count from job";
-        $result1 = mysqli_query($conn, $query1);
-        $row1 = mysqli_fetch_assoc($result1);
-
-        // Fetch data from the job count
-        $query2 = "SELECT COUNT(applicant_id) AS applicant from job_applicants";
-        $result2 = mysqli_query($conn, $query2);
-        $row2 = mysqli_fetch_assoc($result2);
-
-?>
 
 <!-- ======= Header ======= -->
   <header id="header" class="header fixed-top d-flex align-items-center">
@@ -323,106 +339,102 @@ if (isset($_SESSION['id']) && isset($_SESSION['username']) && $_SESSION['role'] 
   <main id="main" class="main">
 
 <div class="pagetitle">
-  <h1>Dashboard</h1>
+  <h1>Add Branch</h1>
   <nav>
     <ol class="breadcrumb">
-      <li class="breadcrumb-item"><a href="admin-dashboard.php">Home</a></li>
-      <li class="breadcrumb-item active">Dashboard</li>
+      <li class="breadcrumb-item"><a href="branches.php">Back</a></li>
+      <li class="breadcrumb-item active">Branches</li>
     </ol>
   </nav>
 </div><!-- End Page Title -->
 
-    <section class="section dashboard">
-      <div class="row">
-
-        <!-- Left side columns -->
-        <div class="col-lg-8">
-          <div class="row">
-
-            <!-- Sales Card -->
-            <div class="col-xxl-4 col-md-6">
-              <div class="card info-card sales-card">
-
-
-                <div class="card-body">
-                  <h5 class="card-title">Total Count <span>| Online Applicants</span></h5>
-
-                  <div class="d-flex align-items-center">
-                    <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
-                      <i class="bx bx-paper-plane"></i>
+<div class="container mt-5">
+        <div class="row">
+            <!-- Left Column - Forms on the Left -->
+            <div class="col-md-6">
+                <form method="POST" action="<?php echo $_SERVER['PHP_SELF']; ?>">
+                    <div class="mb-3">
+                        <label for="areaLeft" class="form-label"><b>Area</b></label>
+                        <select class="form-select" id="areaLeft" name="area">
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                        </select>
                     </div>
-                    <div class="ps-3">
-                      <h6><?php echo $row2['applicant']; ?></h6>
-                      <span class="text-success small pt-1 fw-bold">job applicants </span>in all branches<span class="text-muted small pt-2 ps-1"></span>
-
+                    <div class="mb-3">
+                        <label for="branchNameLeft" class="form-label"><b>Branch Name</b></label>
+                        <input type="text" class="form-control" id="branchNameLeft" name="branch_name" placeholder="Branch Name" required>
                     </div>
-                  </div>
-                </div>
-
-              </div>
-            </div><!-- End Sales Card -->
-
-            <!-- Revenue Card -->
-            <div class="col-xxl-4 col-md-6">
-              <div class="card info-card revenue-card">
-
-                <div class="card-body">
-                  <h5 class="card-title">Total Jobs <span>| Available</span></h5>
-
-                  <div class="d-flex align-items-center">
-                    <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
-                      <i class="bx bxs-briefcase-alt-2"></i>
+                    <div class="mb-3">
+                        <label for="locationLeft" class="form-label"><b>Location</b></label>
+                        <input type="text" class="form-control" id="locationLeft" name="location" placeholder="Branch Location" required>
                     </div>
-                    <div class="ps-3">
-                      <h6><?php echo $row1['job_count']; ?></h6>
-                      <span class="text-success small pt-1 fw-bold">jobs available</span> in all branches<span class="text-muted small pt-2 ps-1"></span>
 
+               
+            </div>
+
+            <!-- Right Column - Forms on the Right -->
+            <div class="col-md-6">
+            <div class="mb-3">
+                        <label for="mobileNoLeft" class="form-label"><b>Mobile No</b> (Separate with ' ; ' if multiple)</label>
+                        <input type="text" class="form-control" id="mobileNoLeft" name="mobile_no" placeholder="Mobile Number" required>
                     </div>
-                  </div>
-                </div>
-
-              </div>
-            </div><!-- End Revenue Card -->
-
-            <!-- Customers Card -->
-            <div class="col-xxl-4 col-xl-12">
-
-              <div class="card info-card customers-card">
-
-                <div class="filter">
-                  <a class="icon" href="#" data-bs-toggle="dropdown"><i class="bi bi-three-dots"></i></a>
-                  <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
-                    <li class="dropdown-header text-start">
-                      <h6>Filter</h6>
-                    </li>
-
-                    <li><a class="dropdown-item" href="#">Today</a></li>
-                    <li><a class="dropdown-item" href="#">This Month</a></li>
-                    <li><a class="dropdown-item" href="#">This Year</a></li>
-                  </ul>
-                </div>
-
-                <div class="card-body">
-                  <h5 class="card-title">Customers <span>| This Year</span></h5>
-
-                  <div class="d-flex align-items-center">
-                    <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
-                      <i class="bi bi-people"></i>
+                    <div class="mb-3">
+                        <label for="telNoLeft" class="form-label"><b>Tel No</b> (Separate with ' ; ' if multiple) </label>
+                        <input type="text" class="form-control" id="telNoLeft" name="tel_no" placeholder="Telephone Number" required>
                     </div>
-                    <div class="ps-3">
-                      <h6>1244</h6>
-                      <span class="text-danger small pt-1 fw-bold">12%</span> <span class="text-muted small pt-2 ps-1">decrease</span>
+                    <div class="mb-3">
+                  <label for="hrAssignedLeft" class="form-label"><b>HR Assigned</b></label>
+                  <select class="form-select" id="hrAssignedLeft" name="hr_assigned" required>
+                        <?php
+                        // Fetch user data from the 'user' table
+                        $userQuery = "SELECT id, name, role FROM user WHERE role = 'HR'";
+                        $userResult = mysqli_query($conn, $userQuery);
 
-                    </div>
+                        // Display each user as an option in the dropdown
+                        while ($userRow = mysqli_fetch_assoc($userResult)) {
+                            echo '<option value="' . $userRow['id'] . '">' . $userRow['name'] . ' | ' . $userRow['role'] . '</option>';
+                        }
+
+                        // Free the result set
+                        mysqli_free_result($userResult);
+                        ?>
+                    </select>
                   </div>
 
-                </div>
-              </div>
+            </div>
+        </div>
+        <button type="submit" class="btn btn-success">Add Branch</button>
+    </div>
+    
+</form>
 
-            </div><!-- End Customers Card -->
-  
-  
-  </main><!-- End #main -->
+</main><!-- End #main -->
+
+<script>
+    // Function to redirect after success and show SweetAlert with delay
+    function redirectAfterSuccess() {
+        Swal.fire({
+            icon: 'success',
+            title: 'Success!',
+            text: 'Adding branch successful!',
+            timer: 2000, // Display message for 2 seconds
+            showConfirmButton: false
+        }).then(function () {
+            window.location.href = 'branches.php';
+        });
+    }
+
+    // Check if the addBranchSuccess session variable is set, then show the SweetAlert
+    $(document).ready(function () {
+        <?php
+        if (isset($_SESSION['addBranchSuccess']) && $_SESSION['addBranchSuccess']) {
+            echo "redirectAfterSuccess();";
+            unset($_SESSION['addBranchSuccess']); // Clear the session variable
+        }
+        ?>
+    });
+</script>
 
   <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
 
@@ -439,9 +451,6 @@ if (isset($_SESSION['id']) && isset($_SESSION['username']) && $_SESSION['role'] 
   <!-- Template Main JS File -->
   <script src="../assets/js/main.js"></script>
 
-</body>
-
-</html>
 
 <!--Container Main end-->
 

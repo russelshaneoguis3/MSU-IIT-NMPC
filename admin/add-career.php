@@ -5,6 +5,63 @@ include("../connection.php");
 
 if (isset($_SESSION['id']) && isset($_SESSION['username']) && $_SESSION['role'] === 'administrator') {
 
+    // Add job
+    if ($_SERVER["REQUEST_METHOD"] == "POST") {
+      // Prepare and bind the SQL statement with placeholders
+      $insertQuery = "INSERT INTO job (branch_loc, position, job_des1, job_des2, job_des3, job_img)
+                      VALUES (?, ?, ?, ?, ?, ?)";
+
+      $stmt = $conn->prepare($insertQuery);
+      $stmt->bind_param("isssss", $branch_loc, $position, $job_des1, $job_des2, $job_des3, $job_img);
+
+      // Set the parameter values
+      $branch_loc = $_POST['branch_loc'];
+      $position = $_POST['position'];
+      $job_des1 = $_POST['job_des1'];
+      $job_des2 = $_POST['job_des2'];
+      $job_des3 = $_POST['job_des3'];
+
+      // Handle image upload
+        $imgFile = $_FILES['job_img']['tmp_name'];
+        $imgFileName = $_FILES['job_img']['name'];
+        $uploadDirectory = "../img/uploads/";
+
+        // Check if the file type is allowed
+        $allowedExtensions = ['jpg', 'jpeg', 'png'];
+        $uploadedFileExtension = strtolower(pathinfo($imgFileName, PATHINFO_EXTENSION));
+
+        if (!in_array($uploadedFileExtension, $allowedExtensions)) {
+          // Handle invalid file type with SweetAlert
+          $_SESSION['addJobError'] = true;
+      }
+      exit();
+
+        // Ensure the upload directory exists
+        if (!file_exists($uploadDirectory)) {
+            mkdir($uploadDirectory, 0777, true);
+        }
+
+        // Move the uploaded file to the upload directory
+        $targetPath = $uploadDirectory . $imgFileName;
+
+        if (move_uploaded_file($imgFile, $targetPath)) {
+            // Save the file path in the database
+            $job_img = $targetPath;
+        } else {
+            // Handle upload failure
+            echo "Error uploading image.";
+        }
+      // Execute the statement
+      if ($stmt->execute()) {
+          $_SESSION['addJobSuccess'] = true;
+      } else {
+          // Handle query execution error
+          echo "Error adding Job: " . $stmt->error;
+      }
+
+      // Close the statement
+      $stmt->close();
+  }
 ?>
 
 <!DOCTYPE html>
@@ -60,20 +117,6 @@ if (isset($_SESSION['id']) && isset($_SESSION['username']) && $_SESSION['role'] 
     <img src="../img/transition.jpg" alt="Loading Image">
 </div>
 
-
-<?php 
-
-        // Fetch data from the job count
-        $query1 = "SELECT COUNT(job_id) AS job_count from job";
-        $result1 = mysqli_query($conn, $query1);
-        $row1 = mysqli_fetch_assoc($result1);
-
-        // Fetch data from the job count
-        $query2 = "SELECT COUNT(applicant_id) AS applicant from job_applicants";
-        $result2 = mysqli_query($conn, $query2);
-        $row2 = mysqli_fetch_assoc($result2);
-
-?>
 
 <!-- ======= Header ======= -->
   <header id="header" class="header fixed-top d-flex align-items-center">
@@ -315,114 +358,86 @@ if (isset($_SESSION['id']) && isset($_SESSION['username']) && $_SESSION['role'] 
           <span>FAQs</span>
         </a>
       </li>
+    
+
+    
     </ul>
 
   </aside><!-- End Sidebar-->
 
-  <!-- Main BOdy -->
   <main id="main" class="main">
 
-<div class="pagetitle">
-  <h1>Dashboard</h1>
-  <nav>
-    <ol class="breadcrumb">
-      <li class="breadcrumb-item"><a href="admin-dashboard.php">Home</a></li>
-      <li class="breadcrumb-item active">Dashboard</li>
-    </ol>
-  </nav>
-</div><!-- End Page Title -->
+    <div class="pagetitle">
+      <h1>Add Career</h1>
+      <nav>
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="career.php?">Back</a></li>
+          <li class="breadcrumb-item active">Add Careers </li>
+        </ol>
+      </nav>
+    </div><!-- End Page Title -->
+    <div class="container mt-5">
+        <div class="row">
+            <!-- Left Column - Forms on the Left -->
+            <div class="col-md-6">
+            <form method="POST" action="<?php echo $_SERVER['PHP_SELF']; ?>" enctype="multipart/form-data">
+                <div class="mb-3">
+                  <label for="branchnameLeft" class="form-label"><b>Branch Name</b></label>
+                  <select class="form-select" id="jobnameLeft" name="branch_loc" required>
+                  <?php
+                  // Fetch branch name table
+                        $userQuery1 = "SELECT branch_id, branch_name FROM branch";
+                        $userResult1 = mysqli_query($conn, $userQuery1);
 
-    <section class="section dashboard">
-      <div class="row">
+                        // Display each name as an option in the dropdown
+                        while ($userRow = mysqli_fetch_assoc($userResult1)) {
+                            echo '<option value="' . $userRow['branch_id'] . '">' . $userRow['branch_name'] . '</option>';
+                        }
 
-        <!-- Left side columns -->
-        <div class="col-lg-8">
-          <div class="row">
-
-            <!-- Sales Card -->
-            <div class="col-xxl-4 col-md-6">
-              <div class="card info-card sales-card">
-
-
-                <div class="card-body">
-                  <h5 class="card-title">Total Count <span>| Online Applicants</span></h5>
-
-                  <div class="d-flex align-items-center">
-                    <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
-                      <i class="bx bx-paper-plane"></i>
-                    </div>
-                    <div class="ps-3">
-                      <h6><?php echo $row2['applicant']; ?></h6>
-                      <span class="text-success small pt-1 fw-bold">job applicants </span>in all branches<span class="text-muted small pt-2 ps-1"></span>
-
-                    </div>
+                        // Free the result set
+                        ?>
+                    </select>
                   </div>
-                </div>
-
-              </div>
-            </div><!-- End Sales Card -->
-
-            <!-- Revenue Card -->
-            <div class="col-xxl-4 col-md-6">
-              <div class="card info-card revenue-card">
-
-                <div class="card-body">
-                  <h5 class="card-title">Total Jobs <span>| Available</span></h5>
-
-                  <div class="d-flex align-items-center">
-                    <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
-                      <i class="bx bxs-briefcase-alt-2"></i>
+                    <div class="mb-3">
+                        <label for="positionLeft" class="form-label"><b>Job position</b></label>
+                        <input type="text" class="form-control" id="positionLeft" name="position" placeholder="Job Position" required>
                     </div>
-                    <div class="ps-3">
-                      <h6><?php echo $row1['job_count']; ?></h6>
-                      <span class="text-success small pt-1 fw-bold">jobs available</span> in all branches<span class="text-muted small pt-2 ps-1"></span>
-
+                    <div class="mb-3">
+                        <label for="jobdes1Left" class="form-label"><b>Job Description 1</b></label>
+                        <input type="text" class="form-control" id="jobdes1Left" name="job_des1" placeholder="First Description" required>
                     </div>
-                  </div>
-                </div>
 
-              </div>
-            </div><!-- End Revenue Card -->
+               
+            </div>
 
-            <!-- Customers Card -->
-            <div class="col-xxl-4 col-xl-12">
-
-              <div class="card info-card customers-card">
-
-                <div class="filter">
-                  <a class="icon" href="#" data-bs-toggle="dropdown"><i class="bi bi-three-dots"></i></a>
-                  <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
-                    <li class="dropdown-header text-start">
-                      <h6>Filter</h6>
-                    </li>
-
-                    <li><a class="dropdown-item" href="#">Today</a></li>
-                    <li><a class="dropdown-item" href="#">This Month</a></li>
-                    <li><a class="dropdown-item" href="#">This Year</a></li>
-                  </ul>
-                </div>
-
-                <div class="card-body">
-                  <h5 class="card-title">Customers <span>| This Year</span></h5>
-
-                  <div class="d-flex align-items-center">
-                    <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
-                      <i class="bi bi-people"></i>
+            <!-- Right Column - Forms on the Right -->
+            <div class="col-md-6">
+            <div class="mb-3">
+                        <label for="jobdes2Left" class="form-label"><b>Job Description 2</b></label>
+                        <input type="text" class="form-control" id="jobdes2Left" name="job_des2" placeholder="Second Description" required>
                     </div>
-                    <div class="ps-3">
-                      <h6>1244</h6>
-                      <span class="text-danger small pt-1 fw-bold">12%</span> <span class="text-muted small pt-2 ps-1">decrease</span>
-
+                    <div class="mb-3">
+                        <label for="jobdes3Left" class="form-label"><b>Tel No</b></label>
+                        <input type="text" class="form-control" id="jobdes3Left" name="job_des3" placeholder="Third Description" required>
                     </div>
+                    <div class="mb-3">
+                   <label for="imgLeft" class="form-label"><b>Job Image</b> (JPG, JPEG, and PNG only)</b></label>
+                  <input type="file" class="form-control" id="imgLeft" name="job_img" accept="image/*" required>
                   </div>
 
-                </div>
-              </div>
 
-            </div><!-- End Customers Card -->
-  
-  
-  </main><!-- End #main -->
+            </div>
+        </div>
+        <button type="submit" class="btn btn-success">Add Branch</button>
+    </div>
+    
+</form>
+
+<br>
+ 
+
+</main><!-- End #main -->
+
 
   <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
 
@@ -439,13 +454,8 @@ if (isset($_SESSION['id']) && isset($_SESSION['username']) && $_SESSION['role'] 
   <!-- Template Main JS File -->
   <script src="../assets/js/main.js"></script>
 
-</body>
-
-</html>
 
 <!--Container Main end-->
-
-
 
 <!-- ======= Footer ======= -->
 <footer id="footer">
@@ -475,9 +485,48 @@ if (isset($_SESSION['id']) && isset($_SESSION['username']) && $_SESSION['role'] 
   </div>
 </div>
 </footer>
-
-
 <!-- End Footer -->
+
+<script>
+    // Function to redirect after success and show SweetAlert with delay
+    function redirectAfterSuccess() {
+        Swal.fire({
+            icon: 'success',
+            title: 'Success!',
+            text: 'Adding Job successful!',
+            timer: 2000, // Display message for 2 seconds
+            showConfirmButton: false
+        }).then(function () {
+            window.location.href = 'career.php';
+        });
+    }
+
+        // Function to show SweetAlert for invalid file type
+    function showInvalidFileTypeAlert() {
+        Swal.fire({
+            icon: 'error',
+            title: 'Invalid File Type',
+            text: 'Only JPG, JPEG, and PNG files are allowed.'
+        });
+      }
+
+    // Check if the addJobSuccess session variable is set, then show the SweetAlert
+    $(document).ready(function () {
+        <?php
+        if (isset($_SESSION['addJobSuccess']) && $_SESSION['addJobSuccess']) {
+            echo "redirectAfterSuccess();";
+            unset($_SESSION['addJobSuccess']); // Clear the session variable
+        }
+
+        if (isset($_SESSION['addJobError']) && $_SESSION['addJobError']) {
+          echo "showInvalidFileTypeAlert();";
+          unset($_SESSION['addJobError']); // Clear the session variable
+        }
+        ?>
+    });
+</script>
+
+
 
 </body>
 

@@ -24,7 +24,14 @@ form {
     border-radius: 30px;
     background-color: #ffffff;
     margin-right: 0.5px; /* Added margin for spacing */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.7);
+    transition: box-shadow 0.3s ease-in-out;
 }
+
+form:hover {
+    box-shadow: 0 2px 4px rgb(255, 255, 255);
+}
+
 
 form input {
     width: 80%;
@@ -83,6 +90,8 @@ padding-left: 40px; /* Add padding for the icons */
     padding: 2px; /* Add some padding for space */
     display: flex; /* Use flexbox to arrange icon and input */
     align-items: center; /* Center items vertically */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: box-shadow 0.3s ease-in-out;
 }
 
 .input-container i {
