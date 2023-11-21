@@ -435,7 +435,6 @@ function escapeSingleQuotes($string) {
                                 <th scope="col" class="col-md-4">Branches</th>
                                 <th scope="col" class="col-md-3">Contact No.</th>
                                 <th scope="col" class="col-md-2">HR Assigned</th>
-                                <th scope="col" class="col-md-2">Available Jobs</th>
                                 <th scope="col" class="col-md-1">Action</th>
                             </tr>
                         </thead>
@@ -447,7 +446,6 @@ function escapeSingleQuotes($string) {
                             echo '<td>' . $row['branch'] . '</td>';
                             echo '<td>' . $row['contact'] . '</td>';
                             echo '<td>' . $row['name'] . '</td>'; 
-                            echo '<td>' .'<b>',$row['job_count'],'</b>', "  Available" . '</td>'; 
                             echo '<td>';
                             // Add an Edit button with a Bootstrap class
                             echo '<a href="#" class="btn btn-outline-warning" onclick="editBranch(' . $row['branch_id'] . ', \'' . escapeSingleQuotes($row['branch_name']) . '\', \'' . escapeSingleQuotes($row['location']) . '\', \'' . escapeSingleQuotes($row['mobile_no']) . '\', \'' . escapeSingleQuotes($row['tel_no']) . '\', \'' . escapeSingleQuotes($row['hr_assigned']) . '\')"><i class="fa-solid fa-pen-to-square"></i></a>';

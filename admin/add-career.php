@@ -33,8 +33,9 @@ if (isset($_SESSION['id']) && isset($_SESSION['username']) && $_SESSION['role'] 
         if (!in_array($uploadedFileExtension, $allowedExtensions)) {
           // Handle invalid file type with SweetAlert
           $_SESSION['addJobError'] = true;
+          header("Location: ".$_SERVER['PHP_SELF']);
+          exit();
       }
-      exit();
 
         // Ensure the upload directory exists
         if (!file_exists($uploadDirectory)) {
@@ -417,7 +418,7 @@ if (isset($_SESSION['id']) && isset($_SESSION['username']) && $_SESSION['role'] 
                         <input type="text" class="form-control" id="jobdes2Left" name="job_des2" placeholder="Second Description" required>
                     </div>
                     <div class="mb-3">
-                        <label for="jobdes3Left" class="form-label"><b>Tel No</b></label>
+                        <label for="jobdes3Left" class="form-label"><b>Job Description 3</b></label>
                         <input type="text" class="form-control" id="jobdes3Left" name="job_des3" placeholder="Third Description" required>
                     </div>
                     <div class="mb-3">
@@ -428,7 +429,7 @@ if (isset($_SESSION['id']) && isset($_SESSION['username']) && $_SESSION['role'] 
 
             </div>
         </div>
-        <button type="submit" class="btn btn-success">Add Branch</button>
+        <button type="submit" class="btn btn-success">Add Career</button>
     </div>
     
 </form>
@@ -502,14 +503,17 @@ if (isset($_SESSION['id']) && isset($_SESSION['username']) && $_SESSION['role'] 
     }
 
         // Function to show SweetAlert for invalid file type
-    function showInvalidFileTypeAlert() {
-        Swal.fire({
-            icon: 'error',
-            title: 'Invalid File Type',
-            text: 'Only JPG, JPEG, and PNG files are allowed.'
-        });
-      }
-
+        function showInvalidFileTypeAlert() {
+    Swal.fire({
+        icon: 'error',
+        title: 'Invalid File Type',
+        text: 'Only JPG, JPEG, and PNG files are allowed.'
+    }).then(function () {
+        // Redirect back to the add career page
+        window.location.href = 'add-career.php';
+        exit();
+    });
+}
     // Check if the addJobSuccess session variable is set, then show the SweetAlert
     $(document).ready(function () {
         <?php
