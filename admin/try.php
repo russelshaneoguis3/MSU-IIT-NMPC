@@ -5,69 +5,59 @@ include("../connection.php");
 
 if (isset($_SESSION['id']) && isset($_SESSION['username']) && $_SESSION['role'] === 'administrator') {
 
-
-        // Check if branch_loc is set in the URL
-        if (isset($_GET['branch_id'])) {
-            $branch_id = $_GET['branch_id'];
+    if (isset($_GET['job_id'])) {
+        $job_id = $_GET['job_id'];
     
-            // Fetch job information based on the selected branch
-            $query = "SELECT job_id, date_pos, branch_loc, position, job_des1, job_des2, job_des3, CONCAT('<b>','• ','</b>', job_des1,'<br>','<b>','• ' , '</b>', job_des2, '<br>', '<b>', '• ', '</b>', job_des3) as job_des, job_img FROM job WHERE branch_loc = ?";
-            $stmt = $conn->prepare($query);
-            $stmt->bind_param("i", $branch_id);
-            $stmt->execute();
-            $result = $stmt->get_result();
+        // Check if the form is submitted
+        if ($_SERVER["REQUEST_METHOD"] == "POST") {
+            // Retrieve values from the form
+            $position = $_POST['position'];
+            $job_des1 = $_POST['job_des1'];
+            $job_des2 = $_POST['job_des2'];
+            $job_des3 = $_POST['job_des3'];
     
-            $stmt->close();
-        } else {
-            echo 'Branch ID not specified.';
-        }
-
-            // Fetch branch_name based on the selected branch_id
-            $branch_query = "SELECT branch_name FROM branch WHERE branch_id = ?";
-            $branch_stmt = $conn->prepare($branch_query);
-            $branch_stmt->bind_param("i", $branch_id);
-            $branch_stmt->execute();
-            $branch_result = $branch_stmt->get_result();
-            $branch_row = $branch_result->fetch_assoc();
-            $branch_name = $branch_row['branch_name'];
-
-        if (isset($_GET['deleteJob'])) {
-                $deleteB1 = $_GET['deleteJob'];
-            
-                if (filter_var($deleteB1, FILTER_VALIDATE_INT)) {
-                  // Fetch the file path before deleting the job
-                  $filePathQuery = "SELECT job_img FROM job WHERE job_id = ?";
-                  $filePathStmt = $conn->prepare($filePathQuery);
-                  $filePathStmt->bind_param("i", $deleteB1);
-                  $filePathStmt->execute();
-                  $filePathResult = $filePathStmt->get_result();
-                  $filePathRow = $filePathResult->fetch_assoc();
-                  $filePath = "../uploads/" . $filePathRow['job_img'];
-      
-                  // Delete the job from the database
-                  $deleteB_que1 = "DELETE FROM job WHERE job_id = ?";
-                  $stmt = $conn->prepare($deleteB_que1);
-                  $stmt->bind_param("i", $deleteB1);
-                  $stmt->execute();
-
-                  if ($stmt->affected_rows > 0) {
-                  if (file_exists($filePath)) {
-                    unlink($filePath);
-                }
-                        header("Location: career.php");
-                        exit;
+            // Check if a new image is uploaded
+            if (!empty($_FILES['job_img']['name'])) {
+                // Handle image upload and type validation
+                $allowedExtensions = ['jpg', 'jpeg', 'png'];
+                $uploadDir = "../img/uploads/";
+                $uploadFile = $uploadDir . basename($_FILES['job_img']['name']);
+                $imageFileType = strtolower(pathinfo($uploadFile, PATHINFO_EXTENSION));
+    
+                if (in_array($imageFileType, $allowedExtensions)) {
+                    if (move_uploaded_file($_FILES['job_img']['tmp_name'], $uploadFile)) {
+                        // Image upload successful, update the database with the complete path
+                        $completeImagePath = $uploadDir . $_FILES['job_img']['name'];
+                        $sql = "UPDATE job SET position = '$position', job_des1 = '$job_des1', job_des2 = '$job_des2', job_des3 = '$job_des3', job_img = '$completeImagePath' WHERE job_id = $job_id";
                     } else {
-                        // Handle query execution error
-                        echo "Error: " . $stmt->error;
+                        // Image upload failed, update the database without changing the image
+                        $sql = "UPDATE job SET position = '$position', job_des1 = '$job_des1', job_des2 = '$job_des2', job_des3 = '$job_des3' WHERE job_id = $job_id";
                     }
-                
-                    $stmt->close();
                 } else {
-                    // Handle invalid job_id (not an integer)
-                    echo "Invalid job ID";
-                }                
-        
+                    // Invalid file type, handle it as needed (you can show an error message or redirect)
+                    echo 'Invalid file type. Only JPG, JPEG, and PNG files are allowed.';
+                    exit();
+                }
+            } else {
+                // No new image uploaded, update the database without changing the image
+                $sql = "UPDATE job SET position = '$position', job_des1 = '$job_des1', job_des2 = '$job_des2', job_des3 = '$job_des3' WHERE job_id = $job_id";
             }
+    
+            // Execute the SQL query
+            if ($conn->query($sql) === TRUE) {
+                echo "Record updated successfully";
+            } else {
+                echo "Error updating record: " . $conn->error;
+            }
+    
+            // Close the database connection
+            $conn->close();
+        }
+    } else {
+        // Handle the case where job_id is not provided in the URL
+        echo 'Job ID not specified.';
+    }
+    
 ?>
 
 <!DOCTYPE html>
@@ -114,8 +104,6 @@ if (isset($_SESSION['id']) && isset($_SESSION['username']) && $_SESSION['role'] 
 
    <!-- Your custom scripts / tranition-->
    <script src="../transition.js"></script>
-
-
     
 </head>
 <body>
@@ -376,62 +364,57 @@ if (isset($_SESSION['id']) && isset($_SESSION['username']) && $_SESSION['role'] 
   <main id="main" class="main">
 
     <div class="pagetitle">
-      <h1>Careers List</h1>
+      <h1>Edit Career Information</h1>
       <nav>
         <ol class="breadcrumb">
-          <li class="breadcrumb-item"><a href="career.php">Back</a></li>
-          <li class="breadcrumb-item active">Careers List</li>
+          <li class="breadcrumb-item"><a href="career-list.php?">Back</a></li>
+          <li class="breadcrumb-item active">Edit Careers </li>
         </ol>
       </nav>
     </div><!-- End Page Title -->
-  
+    <div class="container mt-5">
+        <div class="row">
+            <!-- Left Column - Forms on the Left -->
+            <div class="col-md-6">
+            <form method="POST" action="<?php echo $_SERVER['PHP_SELF']; ?>" enctype="multipart/form-data">
+                <div class="mb-3">
+                  <label for="position" class="form-label"><b>Job Position</b></label>
+                  <input type="text" class="form-control" id="position" name="position" placeholder="Job Position" required>
+                  </div>
+                    <div class="mb-3">
+                        <label for="job_des1" class="form-label"><b>First Desciption</b></label>
+                        <input type="text" class="form-control" id="job_des1" name="job_des1" placeholder="job_des1" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="job_des2" class="form-label"><b>Second Description</b></label>
+                        <input type="text" class="form-control" id="job_des2" name="job_des2" placeholder="Job_des2" required>
+                    </div>
 
-  <!-- Table Area -->
-
-  <div class="card" style="max-width: 80rem;">
-            <div class="card-header" style="background-color: #4775d1; color: #fff;">
-            <h5>Jobs Available at <b> <?php echo $branch_name; ?></b></h5> 
+               
             </div>
-            <div class="card-body" style="background-color: #CFE2FF">
-                <blockquote class="blockquote mb-4">
-                    <table class="table table table-primary">
-                        <thead>
-                            <tr>
-                                <th scope="col" class="col-md-1">Date Posted</th>
-                                <th scope="col" class="col-md-2">Position</th>
-                                <th scope="col" class="col-md-3">Job Description</th>
-                                <th scope="col" class="col-md-1">Image</th>
-                                <th scope="col" class="col-md-1">Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                        <?php
 
-                        // Loop through the data and display each row in the table
-                        while ($row = $result->fetch_assoc()) {
-                            echo '<tr>';
-                            echo '<td>' . $row['date_pos'] . '</td>';
-                            echo '<td>' . $row['position'] . '</td>'; 
-                            echo '<td>' . $row['job_des'] . '</td>'; 
-                            $imagePath = "../uploads/{$row['job_img']}";
-                             // Print the image with the file path
-                            echo "<td><img src='$imagePath' alt='Image' style='max-width: 100px;'>";
-                            echo '<td>';
+            <!-- Right Column - Forms on the Right -->
+            <div class="col-md-6">
+            <div class="mb-3">
+                        <label for="job_des3" class="form-label"><b>Third Description</b></label>
+                        <input type="text" class="form-control" id="job_des3" name="job_des2" placeholder="job_des3" required>
+                    </div>
+                    <div class="mb-3">
+                   <label for="job_img" class="form-label"><b>Job Image</b> (JPG, JPEG, and PNG only)</b></label>
+                  <input type="file" class="form-control" id="job_img" name="job_img" accept="image/*" required>
+                  </div>
 
-                            echo '<a href="editJob.php?job_id=' . $row['job_id'] . '" class="btn btn-outline-warning"><i class="fa-solid fa-pen-to-square"></i></a>';
 
-                            echo ' <a href="#" class="btn btn-outline-danger" onclick="deleteJob(' . $row['job_id'] . ')"><i class="fa-solid fa-trash-can"></i></a>';
-
-                            echo '</td>';    
-                            echo '</tr>';
-                        }
-                        ?>
-                        </tbody>
-                    </table>
-                </blockquote>
             </div>
+        </div>
+        <button type="submit" class="btn btn-success">Edit Career</button>
+    </div>
+    
+</form>
 
 <br>
+ 
+
 </main><!-- End #main -->
 
 
@@ -450,9 +433,6 @@ if (isset($_SESSION['id']) && isset($_SESSION['username']) && $_SESSION['role'] 
   <!-- Template Main JS File -->
   <script src="../assets/js/main.js"></script>
 
-</body>
-
-</html>
 
 <!--Container Main end-->
 
@@ -486,27 +466,6 @@ if (isset($_SESSION['id']) && isset($_SESSION['username']) && $_SESSION['role'] 
 </footer>
 <!-- End Footer -->
 
-<script>
-function deleteJob(jobId) {
-        // Trigger SweetAlert confirmation
-        Swal.fire({
-            title: "Are you sure?",
-            text: "Once deleted, you will not be able to recover this JOB!",
-            icon: "warning",
-            showCancelButton: true,
-            confirmButtonColor: "#d33",
-            cancelButtonColor: "#3085d6",
-            confirmButtonText: "Yes, delete it!",
-        }).then((result) => {
-            if (result.isConfirmed) {
-            // If confirmed, redirect to deleteJob URL
-            window.location.href = "career-list.php?deleteJob=" + jobId;
-
-            }
-        });
-    }
-
-</script>
 </body>
 
 
@@ -516,4 +475,5 @@ function deleteJob(jobId) {
      exit();
 }
 ?>
+
 </html>

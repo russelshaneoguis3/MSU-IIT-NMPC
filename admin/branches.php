@@ -66,6 +66,7 @@ if (isset($_SESSION['id']) && isset($_SESSION['username']) && $_SESSION['role'] 
         mysqli_stmt_close($stmt);
 
     }
+
 // Function to escape single quotes
 function escapeSingleQuotes($string) {
     return str_replace("'", "\\'", $string);
@@ -559,7 +560,7 @@ function escapeSingleQuotes($string) {
         <div class="modal-content">
             <div class="modal-header" style="background-color: #9C0D0F; color: #fff;">
                 <h5 class="modal-title">Edit Branch</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="background-color: #5bc0de">
                 </button>
             </div>
             <div class="modal-body" style="background-color: #f5f5ef;">
