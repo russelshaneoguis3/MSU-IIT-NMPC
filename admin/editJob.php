@@ -377,11 +377,20 @@ if (isset($_SESSION['id']) && isset($_SESSION['username']) && $_SESSION['role'] 
     
 
     
-    </ul>
-
+  </ul>
   </aside><!-- End Sidebar-->
 
   <main id="main" class="main">
+
+  
+  <div class="pagetitle">
+      <h1>Edit Career Form</h1>
+      <nav>
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="career.php">Back</a></li>
+          <li class="breadcrumb-item active">Careers Edit</li>
+        </ol>
+      </nav>
 
 
 <div class="container">
@@ -403,24 +412,24 @@ if (isset($_SESSION['id']) && isset($_SESSION['username']) && $_SESSION['role'] 
         if ($row) {
             ?>
             <form action="editJob.php?job_id=<?php echo $job_id; ?>" method="post" enctype="multipart/form-data">
-                <div class="mb-3">
+                <div class="mb-3" style="width: 50%">
                     <label for="position"><b>Position</b></label>
                     <input type="text" class="form-control" id="position" name="position" value="<?php echo $row['position']; ?>" required>
                 </div>
-                <div class="mb-3">
+                <div class="mb-3" style="width: 50%">
                     <label for="job_des1"><b>First Description</b></label>
                     <input type="text" class="form-control" id="job_des1" name="job_des1" value="<?php echo $row['job_des1']; ?>" required>
                 </div>
-                <div class="mb-3">
+                <div class="mb-3" style="width: 50%">
                     <label for="job_des2"><b>Second Description</b></label>
                     <input type="text" class="form-control" id="job_des2" name="job_des2" value="<?php echo $row['job_des2']; ?>" required>
                 </div>
-                <div class="mb-3">
+                <div class="mb-3" style="width: 50%">
                     <label for="job_des3"><b>Third Description</b></label>
                     <input type="text" class="form-control" id="job_des3" name="job_des3" value="<?php echo $row['job_des3']; ?>" required>
                 </div>
-                <div class="mb-3">
-                    <label for="job_img"><b>Job Image</b></label>
+                <div class="mb-3" style="width: 50%">
+                    <label for="job_img"><b>Job Image</b> (jpg, jpeg, and png are allowed)</label>
                     <input type="file" class="form-control" id="job_img" name="job_img" accept="image/*">
                 </div>
                 <button type="submit" class="btn btn-success">Save Changes</button>
