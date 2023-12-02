@@ -69,7 +69,7 @@ include("connection.php");
     </div>
     <div class="social-links d-none d-md-flex align-items-center">
       <a href="index.php" class="home"><i class="fa fa-home ms-2"></i> Home</a>
-      <a href="" class="career"><i class="fa fa-briefcase ms-2"></i> Careers</a>
+      <a href="user/career.php" class="career transition-link"><i class="fa fa-briefcase ms-2"></i> Careers</a>
       <a href="user/login.php" class="transition-link"><i class="fa fa-user ms-2"></i> Member's Portal</a>
     </div>
   </div>

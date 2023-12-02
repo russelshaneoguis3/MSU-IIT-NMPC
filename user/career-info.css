@@ -1,0 +1,215 @@
+body {
+    padding-top: 56px; /* Adjust this value based on the height of your navbar */
+}
+
+.container-c {
+    display: flex;
+    justify-content: center;
+}
+.card {
+    width: 800px;
+    height: 100%;
+    justify-content: center;
+}
+.card img{
+  width: 100%; 
+  height: 250px;
+}
+
+.card span{
+    font-size: 20px;
+}
+
+.card p {
+    font-size: 20px;
+}
+
+.card span a{
+    font-size: 15px;
+}
+
+.navbar {
+    background-color: #6C757D;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1000; /* Ensure it appears above other elements */
+}
+
+.navbar .navbar-brand img {
+    padding: 0;
+    margin-left: 90px;
+    max-height: 50px;
+}
+
+.navbar .navbar-brand {
+    color: #fff;
+}
+
+.navbar-light .navbar-nav .nav-link {
+    color: #fff;
+}
+
+.navbar-nav .nav-link {
+    transition: border-color 0.3s, color 0.3s;
+}
+
+.navbar-nav .nav-link:hover {
+    text-decoration: underline;
+    color: #9C0D0F;
+}
+ 
+ 
+ /* Breadcrumbs */
+ .breadcrumb {
+    font-size: 14px;
+    font-family: "Nunito", sans-serif;
+    color: #007BFF;
+    font-weight: 600;
+    margin-left: 120px;
+  }
+  
+  .breadcrumb a {
+    color: #007BFF;
+    transition: 0.3s;
+    text-decoration: none;
+  }
+  
+  .breadcrumb a:hover {
+    color: #9C0D0F;
+  }
+  
+  .breadcrumb .breadcrumb-item::before {
+    color: #899bbd;
+  }
+  
+  .breadcrumb .active {
+    color: #51678f;
+    font-weight: 600;
+  }
+  
+  /* Bordered Tabs */
+  .nav-tabs-bordered {
+    border-bottom: 2px solid #ebeef4;
+  }
+  
+  .nav-tabs-bordered .nav-link {
+    margin-bottom: -2px;
+    border: none;
+    color: #2c384e;
+  }
+  
+  .nav-tabs-bordered .nav-link:hover,
+  .nav-tabs-bordered .nav-link:focus {
+    color: #4154f1;
+  }
+  
+  .nav-tabs-bordered .nav-link.active {
+    background-color: #fff;
+    color: #FFFFFF;
+    border-bottom: 2px solid #4154f1;
+  }
+  
+
+  /*--------------------------------------------------------------
+  # Back to top button
+  --------------------------------------------------------------*/
+  .back-to-top {
+    position: fixed;
+    visibility: hidden;
+    opacity: 0;
+    right: 15px;
+    bottom: 15px;
+    z-index: 99999;
+    background: #9C0D0F;
+    width: 40px;
+    height: 40px;
+    border-radius: 4px;
+    transition: all 0.4s;
+  }
+  
+  .back-to-top i {
+    font-size: 24px;
+    color: #fff;
+    line-height: 0;
+  }
+  
+  .back-to-top:hover {
+    background: #007BFF;
+    color: #fff;
+  }
+  
+  .back-to-top.active {
+    visibility: visible;
+    opacity: 1;
+  }
+  
+
+/*--------------------------------------------------------------
+# Footer
+--------------------------------------------------------------*/
+#footer {
+    background: #6C757D;
+    padding: 0 0 20px 0;
+    color: #fff;
+    font-size: 12px;
+  }
+  
+  
+  #footer .footer-top {
+    background: #212529;
+    border-top: 1px solid #6C757D;
+    border-bottom: 1px solid #212529;
+    padding: 30px 0 30px 0;
+  }
+  
+  #footer .footer-top h4 {
+    font-size: 18px;
+    font-weight: bold;
+    color: #fff;
+    text-transform: uppercase;
+    padding-bottom: 12px;
+  }
+  
+  #footer .footer-top .footer-links {
+    margin-bottom: 10px;
+    margin-left: 20px;
+  
+  }
+  
+  #footer .footer-top .footer-links ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  #footer .footer-top .footer-links ul a {
+    color: #fff;
+    transition: 0.3s;
+    display: inline-block;
+    line-height: 1;
+  }
+  
+  #footer .footer-top .footer-links ul a:hover {
+    color: #9C0D0F;
+  }
+  
+  
+  #footer .credits {
+  
+    background: #6C757D;
+    padding-top: 10px;
+    text-align: center;
+    font-size: 13px;
+    color: #fff;
+  }
+  
+  #footer .credits a {
+    color: #9C0D0F;
+  }
+  
+  #footer .credits a:hover {
+    color: #007BFF;
+  }
+  
