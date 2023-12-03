@@ -9,6 +9,9 @@ if (isset($_SESSION['id']) && isset($_SESSION['username']) && $_SESSION['role'] 
     if (isset($_GET['job_id'])) {
         $job_id = $_GET['job_id'];
 
+        $selectQuery = "SELECT job_id, branch_loc, date_pos, position, job_des1, job_des2, job_des3, job_img, branch_id, branch_name, location FROM job, branch where branch_loc = branch_id and job_id = $job_id";
+        $result1 = mysqli_query($conn, $selectQuery);
+
                 // Fetch job information based on job_id
                 $query = "SELECT job_img FROM job WHERE job_id = ?";
                 $stmt = $conn->prepare($query);
@@ -382,16 +385,15 @@ if (isset($_SESSION['id']) && isset($_SESSION['username']) && $_SESSION['role'] 
 
   <main id="main" class="main">
 
-  
+  <?php while ($row = mysqli_fetch_assoc($result1)) { ?>
   <div class="pagetitle">
       <h1>Edit Career Form</h1>
       <nav>
         <ol class="breadcrumb">
-          <li class="breadcrumb-item"><a href="career.php">Back</a></li>
+          <li class="breadcrumb-item"><a href="career-list.php?branch_id=<?php echo $row['branch_id']; ?>">Back</a></li>
           <li class="breadcrumb-item active">Careers Edit</li>
         </ol>
       </nav>
-
 
 <div class="container">
     <h2>Edit Job Form</h2>
@@ -445,6 +447,7 @@ if (isset($_SESSION['id']) && isset($_SESSION['username']) && $_SESSION['role'] 
     } 
     ?>
 </div>
+<?php } ?>
 </main><!-- End #main -->
 
 

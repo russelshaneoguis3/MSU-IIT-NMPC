@@ -34,8 +34,9 @@ if (isset($_SESSION['id']) && isset($_SESSION['username']) && $_SESSION['role'] 
         if (isset($_GET['deleteJob'])) {
                 $deleteB1 = $_GET['deleteJob'];
             
+
                 if (filter_var($deleteB1, FILTER_VALIDATE_INT)) {
-                  // Fetch the file path before deleting the job
+                  // Fetch the file paths before deleting the job
                   $filePathQuery = "SELECT job_img FROM job WHERE job_id = ?";
                   $filePathStmt = $conn->prepare($filePathQuery);
                   $filePathStmt->bind_param("i", $deleteB1);
@@ -43,31 +44,59 @@ if (isset($_SESSION['id']) && isset($_SESSION['username']) && $_SESSION['role'] 
                   $filePathResult = $filePathStmt->get_result();
                   $filePathRow = $filePathResult->fetch_assoc();
                   $filePath = "../uploads/" . $filePathRow['job_img'];
-      
+          
+                  // Fetch associated application files
+                  $filesQuery = "SELECT app_letter, app_resume, other FROM job_applicants WHERE job_applied = ?";
+                  $filesStmt = $conn->prepare($filesQuery);
+                  $filesStmt->bind_param("i", $deleteB1);
+                  $filesStmt->execute();
+                  $filesResult = $filesStmt->get_result();
+          
                   // Delete the job from the database
                   $deleteB_que1 = "DELETE FROM job WHERE job_id = ?";
                   $stmt = $conn->prepare($deleteB_que1);
                   $stmt->bind_param("i", $deleteB1);
                   $stmt->execute();
-
+          
                   if ($stmt->affected_rows > 0) {
-                  if (file_exists($filePath)) {
-                    unlink($filePath);
-                }
-                        header("Location: career.php");
-                        exit;
-                    } else {
-                        // Handle query execution error
-                        echo "Error: " . $stmt->error;
-                    }
-                
-                    $stmt->close();
-                } else {
-                    // Handle invalid job_id (not an integer)
-                    echo "Invalid job ID";
-                }                
-        
-            }
+                      // Delete associated files
+                      if (file_exists($filePath)) {
+                          unlink($filePath);
+                      }
+          
+                      // Loop through associated application files and delete them
+                      while ($fileRow = $filesResult->fetch_assoc()) {
+                          $appLetterPath = "../files/" . $fileRow['app_letter'];
+                          $appResumePath = "../files/" . $fileRow['app_resume'];
+                          $otherPath = "../files/" . $fileRow['other'];
+          
+                          if (file_exists($appLetterPath)) {
+                              unlink($appLetterPath);
+                          }
+          
+                          if (file_exists($appResumePath)) {
+                              unlink($appResumePath);
+                          }
+          
+                          if (file_exists($otherPath)) {
+                              unlink($otherPath);
+                          }
+                      }
+          
+                      header("Location: career.php");
+                      exit;
+                  } else {
+                      // Handle query execution error
+                      echo "Error: " . $stmt->error;
+                  }
+          
+                  $stmt->close();
+              } else {
+                  // Handle invalid job_id (not an integer)
+                  echo "Invalid job ID";
+              }
+          }
+          
 ?>
 
 <!DOCTYPE html>

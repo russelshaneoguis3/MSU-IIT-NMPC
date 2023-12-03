@@ -121,7 +121,7 @@ include("../connection.php");
                 <div class="card">
                     <img src="<?php echo $row['job_img']; ?>" class="card-img-top" alt="Job Image">
                     <div class="card-body">
-                        <h1 class="card-title"><i class="ri-newspaper-line"></i><?php echo " ", $row['position']; ?></span></h1>
+                        <h1 class="card-title"><i class="ri-newspaper-line"></i><?php echo " ", $row['position']; ?></h1>
                         <br>
                         <span><i class="ri-map-pin-5-line"></i><?php echo " ", $row['branch_name']; ?></span>
                         <br>
@@ -134,9 +134,10 @@ include("../connection.php");
                         <p><?php echo $row['job_des2']; ?> </p>
                         <p><?php echo $row['job_des3']; ?></p>
                         <br>
-                        <span><a href="career-info.php?job_id=<?php echo $row['job_id']; ?>" class="btn btn-success"><i class="fa-solid fa-eye"></i> Apply Online</a></span>
+                        <span>Want to apply online? Click here → </span>
+                        <span><a href="apply.php?job_id=<?php echo $row['job_id']; ?>" class="btn btn-primary"><i class="fa-solid fa-pen"></i> Apply Online</a></span>
                         <br><br><br>
-                        <p>NOTE: Applicants who are shortlisted will be scheduled for a qualifying exam and initial interview through e-mail/text.</p>
+                        <p style="font-size: 14px;">NOTE: Applicants who are shortlisted will be scheduled for a qualifying exam and initial interview through e-mail/text.</p>
                     </div>
                 </div>
             </div>
