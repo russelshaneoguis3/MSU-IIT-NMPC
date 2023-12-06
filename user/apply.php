@@ -41,7 +41,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if($resultInsert) {
     // Display JavaScript alert
     echo '<script>';
-    echo 'alert("Please wait for 3 days. The company will call/text you for more information about your application.");';
+    echo 'alert("Thank for your application. Please wait for 3 days. The company will call/text you for more information about your application.");';
     echo 'window.location.href = "career.php";';
     echo '</script>';
   } else {
@@ -198,7 +198,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     </div>
 
                     <div class="mb-3">
-                    <label for="app_letter" class="form-label"><b>Application Letter</b> (PDF files only)</label>
+                    <label for="app_letter" class="form-label"><b>Application Letter</b> (PDF only)</label>
                     <input type="file" class="form-control" id="app_letter" name="app_letter" accept=".pdf" required>
                     </div>
 
@@ -280,7 +280,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             title: "Online Application",
             text: "After you submit your online application, wait for 3 days the Company will text/call you for more information",
             button: "Ok",
-            timer: 5000
+            timer: 10000
         });
     });
 </script>

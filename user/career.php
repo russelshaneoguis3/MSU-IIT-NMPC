@@ -104,7 +104,7 @@ include("../connection.php");
       <nav>
         <ol class="breadcrumb">
           <li class="breadcrumb-item"><a href="../index.php"> Back</a></li>
-          <li class="breadcrumb-item active"> Careers List</li>
+          <li class="breadcrumb-item active"> Career List</li>
         </ol>
       </nav>
     </div><!-- End Page Title -->

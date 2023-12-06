@@ -342,12 +342,23 @@ if (isset($_SESSION['id']) && isset($_SESSION['username']) && $_SESSION['role'] 
         
             $result3 = mysqli_query($conn, $query3);
 
+
+            // Execute SQL query to count applicants
+            $countQuery = "SELECT COUNT(*) as appCount FROM job_applicants";
+            $countResult = $conn->query($countQuery);
+            // Fetch the result as an associative array
+            $countData = $countResult->fetch_assoc();
+            // Get the count from the array
+            $applicantCount = $countData['appCount'];
         ?>
 
   <!-- Table 1/ Area 1 -->
   <div class="card" style="max-width: 80rem;">
             <div class="card-header" style="background-color: #4775d1; color: #fff;">
-            <h4>Area 1 <a href="add-career.php" class="btn btn-success" style="float: right"><i class="fa-solid fa-plus"></i> Add Career</a></h4> 
+            <h4>Area 1 
+            <a href="applicants.php" class="btn btn-secondary" style ="margin-left: 62%"><?php echo $applicantCount ?> Applicant/s </a>
+            <a href="add-career.php" class="btn btn-success" style="float: right"><i class="fa-solid fa-plus"></i> Add Career</a>
+            </h4> 
             </div>
             <div class="card-body" style="background-color: #CFE2FF">
                 <blockquote class="blockquote mb-4">
@@ -503,7 +514,6 @@ if (isset($_SESSION['id']) && isset($_SESSION['username']) && $_SESSION['role'] 
   </div>
 </div>
 </footer>
-
 
 <!-- End Footer -->
 
