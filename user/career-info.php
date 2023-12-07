@@ -121,7 +121,7 @@ include("../connection.php");
                 <div class="card">
                     <img src="<?php echo $row['job_img']; ?>" class="card-img-top" alt="Job Image">
                     <div class="card-body">
-                        <h1 class="card-title"><i class="ri-newspaper-line"></i><?php echo " ", $row['position']; ?></h1>
+                        <h2 class="card-title"><i class="ri-newspaper-line"></i><?php echo " ", $row['position']; ?></h2>
                         <br>
                         <span><i class="ri-map-pin-5-line"></i><?php echo " ", $row['branch_name']; ?></span>
                         <br>
@@ -134,7 +134,7 @@ include("../connection.php");
                         <p><?php echo $row['job_des2']; ?> </p>
                         <p><?php echo $row['job_des3']; ?></p>
                         <br>
-                        <span>Want to apply online? Click here → </span>
+                        <a>Want to apply online? Click here → </a>
                         <span><a href="apply.php?job_id=<?php echo $row['job_id']; ?>" class="btn btn-primary"><i class="fa-solid fa-pen"></i> Apply Online</a></span>
                         <br><br><br>
                         <p style="font-size: 14px;">NOTE: Applicants who are shortlisted will be scheduled for a qualifying exam and initial interview through e-mail/text.</p>

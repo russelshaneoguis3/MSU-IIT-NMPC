@@ -176,77 +176,57 @@ if (isset($_SESSION['id']) && isset($_SESSION['username']) && $_SESSION['role'] 
         </li><!-- End Search Icon-->
 
         <li class="nav-item dropdown">
-
+        <?php
+        // Execute SQL query to count applicants
+            $countQuery = "SELECT COUNT(*) as appCount FROM job_applicants";
+            $countResult = $conn->query($countQuery);
+            // Fetch the result as an associative array
+            $countData = $countResult->fetch_assoc();
+            // Get the count from the array
+            $applicantCount = $countData['appCount'];
+        ?>
           <a class="nav-link nav-icon" href="#" data-bs-toggle="dropdown">
             <i class="bi bi-bell"></i>
-            <span class="badge bg-primary badge-number">4</span>
+            <span class="badge bg-primary badge-number"><?php echo $applicantCount ?></span>
           </a><!-- End Notification Icon -->
 
           <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow notifications">
             <li class="dropdown-header">
-              You have 4 new notifications
-              <a href="#"><span class="badge rounded-pill bg-primary p-2 ms-2">View all</span></a>
+            You have <?php echo $applicantCount ?> online applicants!
+              <a href="applicants.php"><span class="badge rounded-pill bg-primary p-2 ms-2">View all</span></a>
             </li>
             <li>
               <hr class="dropdown-divider">
             </li>
 
-            <li class="notification-item">
-              <i class="bi bi-exclamation-circle text-warning"></i>
+            <?php
+                        // Execute SQL query to retrieve information
+          $query5 = "SELECT ja.applicant_id, ja.address, ja.job_applied, ja.app_name, ja.contact_no, ja.email, j.position, ja.degree, ja.app_letter, ja.app_resume, ja.other,
+          CONCAT(b.branch_name, '<br>', ' ', b.location) as loc,
+                ja.app_date
+                FROM job_applicants ja
+                INNER JOIN job j ON ja.job_applied = j.job_id
+                INNER JOIN branch b ON j.branch_loc = b.branch_id Limit 5";
+      
+              $result5 = $conn->query($query5);
+            ?>
+
+              <?php while ($row = $result5->fetch_assoc()) { ?>
+
+              <li class="notification-item">
+              <i class="bi bi-info-circle text-success"></i>
+              <a href ="applicants-info.php?applicant_id=<?php echo $row['applicant_id']; ?>"> 
+
               <div>
-                <h4>Lorem Ipsum</h4>
-                <p>Quae dolorem earum veritatis oditseno</p>
-                <p>30 min. ago</p>
+                <h4><?php echo $row['position']; ?></h4>
+                <p><?php echo $row['app_name']; ?></p>
+                <p><?php echo $row['app_date']; ?></p>
               </div>
-            </li>
+              </a>
+              </li>
 
-            <li>
-              <hr class="dropdown-divider">
-            </li>
-
-            <li class="notification-item">
-              <i class="bi bi-x-circle text-danger"></i>
-              <div>
-                <h4>Atque rerum nesciunt</h4>
-                <p>Quae dolorem earum veritatis oditseno</p>
-                <p>1 hr. ago</p>
-              </div>
-            </li>
-
-            <li>
-              <hr class="dropdown-divider">
-            </li>
-
-            <li class="notification-item">
-              <i class="bi bi-check-circle text-success"></i>
-              <div>
-                <h4>Sit rerum fuga</h4>
-                <p>Quae dolorem earum veritatis oditseno</p>
-                <p>2 hrs. ago</p>
-              </div>
-            </li>
-
-            <li>
-              <hr class="dropdown-divider">
-            </li>
-
-            <li class="notification-item">
-              <i class="bi bi-info-circle text-primary"></i>
-              <div>
-                <h4>Dicta reprehenderit</h4>
-                <p>Quae dolorem earum veritatis oditseno</p>
-                <p>4 hrs. ago</p>
-              </div>
-            </li>
-
-            <li>
-              <hr class="dropdown-divider">
-            </li>
-            <li class="dropdown-footer">
-              <a href="#">Show all notifications</a>
-            </li>
-
-          </ul><!-- End Notification Dropdown Items -->
+              <?php } ?> 
+              </ul><!-- End Notification Dropdown Items -->
 
         </li><!-- End Notification Nav -->
 
