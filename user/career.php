@@ -113,7 +113,10 @@ include("../connection.php");
 
 <div class="container mt-5">
     <div class="row">
-        <?php while ($row = mysqli_fetch_assoc($result)) { ?>
+    <?php
+    if (mysqli_num_rows($result) > 0) {
+                while ($row = mysqli_fetch_assoc($result)) {
+            ?>
             <div class="col-md-3 mb-4">
                 <div class="card">
                     <img src="<?php echo $row['job_img']; ?>" class="card-img-top" alt="Job Image">
@@ -126,7 +129,17 @@ include("../connection.php");
                     </div>
                 </div>
             </div>
-        <?php } ?>
+            <?php
+                }
+            } else {
+                echo '<div class="col-12 text-center">
+                <hr>
+                <h1>No available Job</h1>
+                <hr>
+                <br><br><br><br>
+                </div>';
+            }
+            ?>
     </div>
 </div>
 
